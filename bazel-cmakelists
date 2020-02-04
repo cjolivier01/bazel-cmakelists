@@ -140,6 +140,11 @@ def ExtractCopts():
 def GenerateCMakeList():
   if not FLAGS.skip_build:
     bazel_args = ['build']
+    bazel_args.append('--cxxopt=-Wno-c++11-narrowing')
+    bazel_args.append('--cxxopt=-std=c++14')
+    bazel_args.append('--config=mkl')
+    bazel_args.append("--strip=never")
+    bazel_args.append("--copt=-fdiagnostics-color")
     bazel_args.extend(FLAGS.targets)
     bazel_args.extend(FLAGS.bazel_args[1:])
     run_bazel(bazel_args)
