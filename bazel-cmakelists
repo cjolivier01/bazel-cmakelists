@@ -177,11 +177,11 @@ def GenerateCMakeList():
     cmakelist.write("project(%s)\n\n" % FLAGS.project)
     cmakelist.write("set(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -std=c++14\")\n\n")
     cmakelist.write("set(SOURCE_FILES\n    ")
-    cmakelist.write("\n    ".join(sources))
+    cmakelist.write("\n    ${CMAKE_CURRENT_LIST_DIR}/".join(sources))
     cmakelist.write(")\n\n")
     cmakelist.write("set(GENERATED_SOURCES\n    ")
     if FLAGS.genfiles:
-      cmakelist.write("\n    ".join(generated))
+      cmakelist.write("\n    ${CMAKE_CURRENT_LIST_DIR}/".join(generated))
     cmakelist.write(")\n\n")
     cmakelist.write("set(INCLUDE_DIRECTORIES\n    ")
     cmakelist.write("\n    ".join(includes))
