@@ -62,7 +62,7 @@ def run_bazel(args):
     args = sa.split() + args
 
   args = ['bazel'] + args
-  print args
+  print "Running: " + str(args)
   return subprocess.check_output(args)
 
 def ExtractSources():
@@ -140,7 +140,8 @@ def ExtractCopts():
 def GenerateCMakeList():
   if not FLAGS.skip_build:
     bazel_args = ['build']
-    bazel_args.append('--cxxopt=-Wno-c++11-narrowing')
+    if FLAGS.clang:
+      bazel_args.append('--cxxopt=-Wno-c++11-narrowing')
     bazel_args.append('--cxxopt=-std=c++14')
     bazel_args.append('--config=mkl')
     bazel_args.append("--strip=never")
@@ -150,6 +151,8 @@ def GenerateCMakeList():
     run_bazel(bazel_args)
 
   sources = ExtractSources()
+  if not sources:
+    raise ValueError("No sources found")
   generated = ExtractGenerated()
   includes = ExtractIncludes()
   defines = ExtractDefines()
@@ -211,6 +214,7 @@ if __name__ == "__main__":
   parser.add_argument('--project')
   parser.add_argument('--targets', default=['//...'], nargs='+')
   parser.add_argument('--open', action='store_true')
+  parser.add_argument('--clang', default="gcc", action='store_true')
   parser.add_argument('--mac_debug', action='store_true')
   parser.add_argument('--skip_build', action='store_true', help="Skip build step if you have aleady built target(s)")
   parser.add_argument('--genfiles', action='store_true', help='Generate project with genfiles')
