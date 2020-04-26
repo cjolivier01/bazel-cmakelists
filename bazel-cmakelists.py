@@ -62,7 +62,8 @@ def run_bazel(args):
     args = sa.split() + args
 
   args = ['bazel'] + args
-  print "Running: " + str(args)
+  cmd = " ".join(args)
+  print "Running: " + cmd
   return subprocess.check_output(args)
 
 def ExtractSources():
