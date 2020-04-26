@@ -32,7 +32,7 @@ def Exists(fn):
     os.stat(fn)
     return True
   except OSError:
-    sys.stderr.write("Skipping %s ...\n" % fn)
+    sys.stderr.write("Skipping non-existent file: %s ...\n" % fn)
     return False
 
 def GetBasePath(fn):
@@ -98,7 +98,11 @@ def ExtractIncludes():
       includes.append(geninc)
 
       inc = path.realpath(path.join(ConvertExternalPath(prefix), val))
-      includes.append(inc)
+      if not inc.startswith("/spare/"):
+        if not "/.cache/bazel/" in inc:
+          includes.append(inc)
+        else:
+          print("XSkipping: " + inc)
 
   for e in tree.findall(".//string[@name='include_prefix']/.."):
     prefix = e.attrib['name'].split(':')[0]
@@ -110,7 +114,10 @@ def ExtractIncludes():
     inc = path.realpath(path.join(ConvertExternalPath(prefix), val))
     if inc.endswith(include_prefix):
       inc = inc[:-len(include_prefix)]
-      includes.append(inc)
+      if not "/.cache/bazel/" in inc:
+        includes.append(inc)
+      else:
+        print("More skipping: " + inc)
 
   for d in os.listdir('bazel-%s/external' % FLAGS.project):
     if os.path.isdir('bazel-%s/external/%s' % (FLAGS.project, d)):
